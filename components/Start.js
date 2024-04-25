@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -7,44 +7,44 @@ import {
   TouchableOpacity,
   ImageBackground,
   Keyboard,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import * as Font from "expo-font";
+} from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import * as Font from 'expo-font'
 
 const Start = ({ navigation }) => {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [name, setName] = useState("");
-  const [selectedColor, setSelectedColor] = useState("#090C08"); // Default color grey
-  const backgroundImage = require("../assets/Background Image.png");
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+  const [fontsLoaded, setFontsLoaded] = useState(false)
+  const [name, setName] = useState('')
+  const [selectedColor, setSelectedColor] = useState('#090C08') // Default color grey
+  const backgroundImage = require('../assets/Background Image.png')
 
   useEffect(() => {
     async function loadFonts() {
       await Font.loadAsync({
-        "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-        "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-      });
-      setFontsLoaded(true);
+        'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
+        'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+      })
+      setFontsLoaded(true)
     }
-    loadFonts();
+    loadFonts()
 
     const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setKeyboardVisible(true),
-    );
+      'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    )
     const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setKeyboardVisible(false),
-    );
+      'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    )
 
     return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+      keyboardDidShowListener.remove()
+      keyboardDidHideListener.remove()
+    }
+  }, [])
 
   if (!fontsLoaded) {
-    return null; // Or a loading spinner, etc.
+    return null // Or a loading spinner, etc.
   }
 
   return (
@@ -82,7 +82,7 @@ const Start = ({ navigation }) => {
                 Choose Background Color:
               </Text>
               <View style={styles.colorOptionsContainer}>
-                {["#090C08", "#474056", "#8A95A5", "#B9C6AE"].map(
+                {['#090C08', '#474056', '#8A95A5', '#B9C6AE'].map(
                   (color, index) => (
                     <TouchableOpacity
                       key={index}
@@ -91,12 +91,12 @@ const Start = ({ navigation }) => {
                         {
                           backgroundColor: color,
                           borderWidth: selectedColor === color ? 2 : 0,
-                          borderColor: "white",
+                          borderColor: 'white',
                         },
                       ]}
                       onPress={() => setSelectedColor(color)}
                     />
-                  ),
+                  )
                 )}
               </View>
             </>
@@ -107,7 +107,7 @@ const Start = ({ navigation }) => {
             <TouchableOpacity
               style={[styles.button, { backgroundColor: selectedColor }]} // Use selectedColor for button background
               onPress={() =>
-                navigation.navigate("Chat", {
+                navigation.navigate('Chat', {
                   name,
                   backgroundColor: selectedColor,
                 })
@@ -119,8 +119,8 @@ const Start = ({ navigation }) => {
         </View>
       </View>
     </ImageBackground>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   backgroundImage: {
@@ -128,32 +128,32 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   whiteBox: {
-    backgroundColor: "#FFF",
-    width: "88%",
-    height: "44%",
-    alignSelf: "center",
+    backgroundColor: '#FFF',
+    width: '88%',
+    height: '44%',
+    alignSelf: 'center',
     borderRadius: 3,
     padding: 20,
-    marginBottom: "6%",
+    marginBottom: '6%',
   },
   titleContainer: {
-    position: "absolute",
-    top: "10%",
-    alignSelf: "center",
+    position: 'absolute',
+    top: '10%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 45,
-    fontFamily: "Poppins-Bold", // Applying Poppins-Bold
-    color: "#FFFFFF",
+    fontFamily: 'Poppins-Bold', // Applying Poppins-Bold
+    color: '#FFFFFF',
   },
   inputSection: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 2,
-    borderColor: "#757083",
+    borderColor: '#757083',
     borderRadius: 3,
     paddingHorizontal: 12,
     marginBottom: 50,
@@ -166,35 +166,35 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Poppins-Regular", // Applying Poppins-Regular
-    color: "#757083", // Greyish color
+    fontFamily: 'Poppins-Regular', // Applying Poppins-Regular
+    color: '#757083', // Greyish color
     opacity: 0.5, // 50% opacity
   },
   buttonContainer: {
-    marginTop: "auto",
+    marginTop: 'auto',
   },
   button: {
-    backgroundColor: "#757083",
+    backgroundColor: '#757083',
     height: 70,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 3,
   },
   buttonText: {
-    fontFamily: "Poppins-Regular", // Applying Poppins-Regular
-    color: "#fff",
+    fontFamily: 'Poppins-Regular', // Applying Poppins-Regular
+    color: '#fff',
     fontSize: 18,
   },
   chooseBackgroundColorText: {
-    fontFamily: "Poppins-Regular", // Applying Poppins-Regular
+    fontFamily: 'Poppins-Regular', // Applying Poppins-Regular
     fontSize: 16,
-    fontWeight: "300",
-    color: "#757083",
+    fontWeight: '300',
+    color: '#757083',
     opacity: 1,
   },
   colorOptionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginTop: 20,
     marginBottom: 20,
   },
@@ -203,6 +203,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
   },
-});
+})
 
-export default Start;
+export default Start

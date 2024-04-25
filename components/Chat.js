@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { useEffect } from 'react'
+import { StyleSheet, View, Text } from 'react-native'
 
 const Chat = ({ route, navigation }) => {
-  const { name, backgroundColor } = route.params;
+  const { name, backgroundColor } = route.params
 
   useEffect(() => {
     navigation.setOptions({
@@ -10,30 +10,30 @@ const Chat = ({ route, navigation }) => {
       headerStyle: {
         backgroundColor: backgroundColor, // Set the background color of the navbar
       },
-      headerTintColor: "#fff", // Adjust text color in the navbar for better visibility
+      headerTintColor: '#fff', // Adjust text color in the navbar for better visibility
       headerTitleStyle: {
-        fontWeight: "bold",
+        fontWeight: 'bold',
       },
-    });
-  }, [navigation, name, backgroundColor]); // Ensure useEffect is triggered when any of these values change
+    })
+  }, [navigation, name, backgroundColor]) // Ensure useEffect is triggered when any of these values change
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <Text style={styles.text}>Welcome to the chat room!</Text>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontSize: 18,
-    color: "#fff", // Ensuring text is visible depending on the background color
+    color: '#fff', // Ensuring text is visible depending on the background color
   },
-});
+})
 
-export default Chat;
+export default Chat
