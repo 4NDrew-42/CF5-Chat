@@ -1,9 +1,17 @@
 import { useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
+import { GiftedChat } from 'react-native-gifted-chat'
 
 const Chat = ({ route, navigation }) => {
-  const { name, backgroundColor } = route.params
+  const { name } = route.params
+  const [messages, setMessages] = useState([])
+  const onSend = (newMessages) => {
+    setMessages((prevMessages) =>
+      GiftedChat.append(previousMessages, newMessages)
+    )
+  }
 
+  // Effect for updating the navigation bar title and background color
   useEffect(() => {
     navigation.setOptions({
       title: `Hello ${name}`, // Set the title in the navigation bar
@@ -17,9 +25,35 @@ const Chat = ({ route, navigation }) => {
     })
   }, [navigation, name, backgroundColor]) // Ensure useEffect is triggered when any of these values change
 
+  // Effect for setting up initial messages in the chat
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: 'Hello developer',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'React Native',
+          avatar: 'https://placeimg.com/140/140/any',
+        },
+      },
+    ])
+  }, [])
+
+  useEffect(() => {
+    navigation.setOptions({ title: name })
+  }, [])
+
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
-      <Text style={styles.text}>Welcome to the chat room!</Text>
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+      />
     </View>
   )
 }
