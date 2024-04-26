@@ -6,7 +6,7 @@ const Chat = ({ route, navigation }) => {
   const { name } = route.params
   const [messages, setMessages] = useState([])
   const onSend = (newMessages) => {
-    setMessages((prevMessages) =>
+    setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, newMessages)
     )
   }
