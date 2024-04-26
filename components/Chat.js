@@ -1,16 +1,39 @@
-import { useEffect } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { useEffect, useState } from 'react'
+import {
+  StyleSheet,
+  View,
+  Text,
+  Platform,
+  KeyboardAvoidingView,
+} from 'react-native'
+import { Bubble, GiftedChat } from 'react-native-gifted-chat'
 
 const Chat = ({ route, navigation }) => {
-  const { name } = route.params
+  const { name, backgroundColor } = route.params
   const [messages, setMessages] = useState([])
+
   const onSend = (newMessages) => {
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, newMessages)
     )
   }
 
+  // Customizing the chat bubble
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#000',
+          },
+          left: {
+            backgroundColor: '#fff',
+          },
+        }}
+      />
+    )
+  }
   // Effect for updating the navigation bar title and background color
   useEffect(() => {
     navigation.setOptions({
@@ -38,22 +61,33 @@ const Chat = ({ route, navigation }) => {
           avatar: 'https://placeimg.com/140/140/any',
         },
       },
+      {
+        _id: 2,
+        text: 'You have entered the chat room',
+        createdAt: new Date(),
+        system: true,
+      },
     ])
   }, [])
 
-  useEffect(() => {
-    navigation.setOptions({ title: name })
-  }, [])
-
+  // Chat component
   return (
-    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+    <View style={{ flex: 1 }}>
       <GiftedChat
         messages={messages}
+        renderBubble={renderBubble}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
         }}
       />
+      {/*  Platform-specific KeyboardAvoidingView */}
+      {Platform.OS === 'android' ? (
+        <KeyboardAvoidingView behavior="height" />
+      ) : null}
+      {Platform.OS === 'ios' && (
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }} />
+      )}
     </View>
   )
 }
