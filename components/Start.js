@@ -8,15 +8,34 @@ import {
   ImageBackground,
   Keyboard,
 } from 'react-native'
+import { getAuth, signInAnonymously } from 'firebase/auth'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Font from 'expo-font'
 
-const Start = ({ navigation }) => {
+const Start = ({ navigation, db }) => {
+  // Local state for Start component
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
   const [fontsLoaded, setFontsLoaded] = useState(false)
   const [name, setName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#090C08') // Default color grey
   const backgroundImage = require('../assets/Background Image.png')
+
+  // Function to handle sign-in
+  const handleSignIn = () => {
+    const auth = getAuth()
+    signInAnonymously(auth)
+      .then((result) => {
+        // Navigate to the Chat screen with parameters
+        navigation.navigate('Chat', {
+          uid: result.user.uid, // User ID from Firebase authentication
+          name: name, // User's name from local state
+          backgroundColor: selectedColor, // Selected background color from local state
+        })
+      })
+      .catch((error) => {
+        console.error('Failed to sign in anonymously', error)
+      })
+  }
 
   useEffect(() => {
     async function loadFonts() {
@@ -106,12 +125,7 @@ const Start = ({ navigation }) => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: selectedColor }]} // Use selectedColor for button background
-              onPress={() =>
-                navigation.navigate('Chat', {
-                  name,
-                  backgroundColor: selectedColor,
-                })
-              }
+              onPress={handleSignIn}
             >
               <Text style={styles.buttonText}>Start Chatting</Text>
             </TouchableOpacity>

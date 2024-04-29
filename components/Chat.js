@@ -1,87 +1,50 @@
 import { useEffect, useState } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  Platform,
-  KeyboardAvoidingView,
-} from 'react-native'
+import { StyleSheet, View, Platform, KeyboardAvoidingView } from 'react-native'
 import { Bubble, GiftedChat } from 'react-native-gifted-chat'
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+} from 'firebase/firestore'
 
-const Chat = ({ route, navigation }) => {
-  const { name, backgroundColor } = route.params
+const Chat = ({ route, db }) => {
+  const { uid, name, backgroundColor } = route.params
   const [messages, setMessages] = useState([])
 
-  const onSend = (newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    )
-  }
-
-  // Customizing the chat bubble
-  const renderBubble = (props) => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: {
-            backgroundColor: '#000',
-          },
-          left: {
-            backgroundColor: '#fff',
-          },
-        }}
-      />
-    )
-  }
-  // Effect for updating the navigation bar title and background color
-  useEffect(() => {
-    navigation.setOptions({
-      title: `Hello ${name}`, // Set the title in the navigation bar
-      headerStyle: {
-        backgroundColor: backgroundColor, // Set the background color of the navbar
-      },
-      headerTintColor: '#fff', // Adjust text color in the navbar for better visibility
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+  const onSend = (newMessages = []) => {
+    addDoc(collection(db, 'messages'), {
+      ...newMessages[0],
+      createdAt: new Date(), // Ensure correct date format for Firestore
     })
-  }, [navigation, name, backgroundColor]) // Ensure useEffect is triggered when any of these values change
+  }
 
-  // Effect for setting up initial messages in the chat
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: 'You have entered the chat room',
-        createdAt: new Date(),
-        system: true,
-      },
-    ])
+    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const firestoreMessages = querySnapshot.docs.map((doc) => ({
+        _id: doc.id,
+        text: doc.data().text,
+        createdAt: new Date(doc.data().createdAt.seconds * 1000),
+        user: doc.data().user,
+      }))
+      setMessages(firestoreMessages)
+    })
+
+    return () => unsubscribe() // Cleanup on unmount
   }, [])
 
-  // Chat component
   return (
     <View style={{ flex: 1 }}>
       <GiftedChat
         messages={messages}
-        renderBubble={renderBubble}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1,
+          _id: uid,
+          name: name,
         }}
       />
-      {/*  Platform-specific KeyboardAvoidingView */}
       {Platform.OS === 'android' ? (
         <KeyboardAvoidingView behavior="height" />
       ) : null}
@@ -97,10 +60,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  text: {
-    fontSize: 18,
-    color: '#fff', // Ensuring text is visible depending on the background color
   },
 })
 
