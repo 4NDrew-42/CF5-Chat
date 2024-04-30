@@ -28,7 +28,7 @@ const App = () => {
         <Stack.Screen name="Start" options={{ headerShown: false }}>
           {(props) => <Start {...props} db={db} />}
         </Stack.Screen>
-        <Stack.Screen name="Chat" options={{ headerShown: false }}>
+        <Stack.Screen name="Chat" options={{ headerShown: true }}>
           {(props) => <Chat {...props} db={db} />}
         </Stack.Screen>
       </Stack.Navigator>
