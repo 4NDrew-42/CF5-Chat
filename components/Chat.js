@@ -32,51 +32,58 @@ const Chat = ({ route, db, navigation, isConnected, storage }) => {
 
   const lightenedColor = blendWithWhite(backgroundColor, 0.66)
 
-  // Effect for updating the navigation bar title and background color
+  let unsubMessages
+  // useEffect hook to set messages options
+  // Create a query to get the "messages" collection from the Firestore database
   useEffect(() => {
-    navigation.setOptions({
-      title: `Hello ${name}`, // Set the title in the navigation bar
-      headerStyle: {
-        backgroundColor: backgroundColor, // Set the background color of the navbar
-      },
-      headerTintColor: '#fff', // Adjust text color in the navbar for better visibility
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    })
-  }, [navigation, name, backgroundColor]) // Ensure useEffect is triggered when any of these values change
+    navigation.setOptions({ title: name })
 
-  // Effect for fetching messages from Firestore
-  useEffect(() => {
-    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const firestoreMessages = querySnapshot.docs.map((doc) => ({
-        _id: doc.id,
-        text: doc.data().text,
-        createdAt: new Date(doc.data().createdAt.seconds * 1000),
-        user: doc.data().user,
-      }))
-      setMessages(firestoreMessages)
-    })
+    if (isConnected === true) {
+      // unregister current onSnapshot() listener to avoid registering multiple listeners when
+      // useEffect code is re-executed.
+      if (unsubMessages) unsubMessages()
+      unsubMessages = null
 
-    return () => unsubscribe() // Cleanup on unmount
-  }, [])
+      const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
 
-  // Function to send a new message
-  const onSend = async (newMessages = []) => {
-    try {
-      const promises = newMessages.map((msg) =>
-        addDoc(collection(db, 'messages'), {
-          ...msg,
-          createdAt: new Date(), // Firestore expects Date objects
+      // Subscribe to changes in the "messages" collection using onSnapshot.
+      // This function will be called whenever there are changes in the collection.
+      unsubMessages = onSnapshot(q, (docs) => {
+        let newMessages = []
+        docs.forEach((doc) => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          })
         })
-      )
-      await Promise.all(promises)
-    } catch (error) {
-      // Handle any errors that occur during the Firestore operation
-      Alert.alert('Send Failed', 'Unable to send message, please try again.')
-      console.error('Failed to send message: ', error)
+        cacheMessages(newMessages)
+        setMessages(newMessages)
+      })
+    } else loadCachedMessages()
+
+    // Clean up code
+    return () => {
+      if (unsubMessages) unsubMessages()
     }
+  }, [isConnected]) // isConnected used as a dependency value and will allow the component to call the callback of useEffect whenewer the isConnected prop's value changes.
+
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(messagesToCache))
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+  // Call this function if the isConnected prop turns out to be false in useEffect()
+  const loadCachedMessages = async () => {
+    // The empty array is for cachedMessages in case AsyncStorage() fails when the messages item hasn’t been set yet in AsyncStorage.
+    const cachedMessages = (await AsyncStorage.getItem('messages')) || []
+    setMessages(JSON.parse(cachedMessages))
+  }
+
+  const onSend = (newMessages) => {
+    addDoc(collection(db, 'messages'), newMessages[0])
   }
 
   // Customizing the avatar
@@ -131,18 +138,19 @@ const Chat = ({ route, db, navigation, isConnected, storage }) => {
 
   // Customizing the input toolbar
   const renderInputToolbar = (props) => {
-    return (
-      <InputToolbar
-        {...props}
-        containerStyle={{
-          backgroundColor: backgroundColor, // Background color of the input toolbar
-          borderTopColor: lightenedColor, // Color of the top border of the input toolbar
-          padding: 12, // Padding around the input toolbar
-          marginTop: 10, // Spacing above the input toolbar
-        }}
-        primaryStyle={{ alignItems: 'center' }}
-      />
-    )
+    if (isConnected)
+      return (
+        <InputToolbar
+          {...props}
+          containerStyle={{
+            backgroundColor: backgroundColor, // Background color of the input toolbar
+            borderTopColor: lightenedColor, // Color of the top border of the input toolbar
+            padding: 12, // Padding around the input toolbar
+            marginTop: 10, // Spacing above the input toolbar
+          }}
+          primaryStyle={{ alignItems: 'center' }}
+        />
+      )
   }
 
   // Customizing the send button

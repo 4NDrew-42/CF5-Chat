@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
@@ -7,12 +7,23 @@ import {
   TouchableOpacity,
   ImageBackground,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native'
-import { getAuth, signInAnonymously } from 'firebase/auth'
+import {
+  getAuth,
+  initializeAuth,
+  getReactNativePersistence,
+  signInAnonymously,
+} from 'firebase/auth'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Font from 'expo-font'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { auth } from './firebaseConfig'
 
-export default function Start({ navigation, db }) {
+const Start = ({ navigation, db, app }) => {
+  /*const auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  })*/
   // Local state for Start component
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
   const [fontsLoaded, setFontsLoaded] = useState(false)
@@ -22,7 +33,6 @@ export default function Start({ navigation, db }) {
 
   // Function to handle sign-in
   const handleSignIn = () => {
-    const auth = getAuth()
     signInAnonymously(auth)
       .then((result) => {
         // Navigate to the Chat screen with parameters
@@ -218,3 +228,5 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
 })
+
+export default Start
