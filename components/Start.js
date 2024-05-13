@@ -12,7 +12,7 @@ import { getAuth, signInAnonymously } from 'firebase/auth'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Font from 'expo-font'
 
-const Start = ({ navigation, db }) => {
+export default function Start({ navigation, db }) {
   // Local state for Start component
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
   const [fontsLoaded, setFontsLoaded] = useState(false)
@@ -218,5 +218,3 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
 })
-
-export default Start

@@ -5,6 +5,7 @@ import {
   Platform,
   Text,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import {
@@ -23,7 +24,9 @@ import {
 } from 'firebase/firestore'
 import { blendWithWhite } from './colorUtils'
 
-const Chat = ({ route, db, navigation }) => {
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+const Chat = ({ route, db, navigation, isConnected, storage }) => {
   const { uid, name, backgroundColor } = route.params
   const [messages, setMessages] = useState([])
 
