@@ -5,6 +5,7 @@ import {
   Platform,
   Text,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import {
@@ -23,7 +24,7 @@ import {
 } from 'firebase/firestore'
 import { blendWithWhite } from './colorUtils'
 
-const Chat = ({ route, db, navigation }) => {
+const Chat = ({ route, db, navigation, isConnected }) => {
   const { uid, name, backgroundColor } = route.params
   const [messages, setMessages] = useState([])
 
@@ -128,18 +129,20 @@ const Chat = ({ route, db, navigation }) => {
 
   // Customizing the input toolbar
   const renderInputToolbar = (props) => {
-    return (
-      <InputToolbar
-        {...props}
-        containerStyle={{
-          backgroundColor: backgroundColor, // Background color of the input toolbar
-          borderTopColor: lightenedColor, // Color of the top border of the input toolbar
-          padding: 12, // Padding around the input toolbar
-          marginTop: 10, // Spacing above the input toolbar
-        }}
-        primaryStyle={{ alignItems: 'center' }}
-      />
-    )
+    if (isConnected)
+      return (
+        <InputToolbar
+          {...props}
+          containerStyle={{
+            backgroundColor: backgroundColor, // Background color of the input toolbar
+            borderTopColor: lightenedColor, // Color of the top border of the input toolbar
+            padding: 12, // Padding around the input toolbar
+            marginTop: 10, // Spacing above the input toolbar
+          }}
+          primaryStyle={{ alignItems: 'center' }}
+        />
+      )
+    else return null
   }
 
   // Customizing the send button
