@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Avatar } from 'react-native-elements'
 import {
   Bubble,
@@ -23,6 +24,7 @@ import {
   onSnapshot,
 } from 'firebase/firestore'
 import { blendWithWhite } from './colorUtils'
+import StatusIndicator from './StstusIndicator'
 
 const Chat = ({ route, db, navigation, isConnected }) => {
   const { uid, name, backgroundColor } = route.params
@@ -41,13 +43,14 @@ const Chat = ({ route, db, navigation, isConnected }) => {
       headerTitleStyle: {
         fontWeight: 'bold',
       },
+      headerRight: () => <StatusIndicator isConnected={isConnected} />, // Add the status indicator to the navbar
     })
-  }, [navigation, name, backgroundColor]) // Ensure useEffect is triggered when any of these values change
+  }, [navigation, name, backgroundColor, isConnected]) // Ensure useEffect is triggered when any of these values change
 
-  // Effect for fetching messages from Firestore
-  useEffect(() => {
+  // Fetch messages from Firestore and cache them
+  const fetchMessagesFromFirestore = async () => {
     const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
       const firestoreMessages = querySnapshot.docs.map((doc) => ({
         _id: doc.id,
         text: doc.data().text,
@@ -55,10 +58,31 @@ const Chat = ({ route, db, navigation, isConnected }) => {
         user: doc.data().user,
       }))
       setMessages(firestoreMessages)
+      await AsyncStorage.setItem(
+        'cachedMessages',
+        JSON.stringify(firestoreMessages)
+      )
     })
 
-    return () => unsubscribe() // Cleanup on unmount
-  }, [])
+    return () => unsubscribe()
+  }
+
+  // Load messages from AsyncStorage
+  const loadMessagesFromCache = async () => {
+    const cachedMessages = await AsyncStorage.getItem('cachedMessages')
+    if (cachedMessages) {
+      setMessages(JSON.parse(cachedMessages))
+    }
+  }
+
+  // Effect to fetch or load messages based on connection status
+  useEffect(() => {
+    if (isConnected) {
+      fetchMessagesFromFirestore()
+    } else {
+      loadMessagesFromCache()
+    }
+  }, [isConnected])
 
   // Function to send a new message
   const onSend = async (newMessages = []) => {
