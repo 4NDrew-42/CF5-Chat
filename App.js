@@ -8,6 +8,7 @@ const Stack = createNativeStackNavigator()
 // Import Firebase
 import { initializeApp } from 'firebase/app'
 import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 // Import React
 import React, { useEffect } from 'react'
@@ -47,6 +48,9 @@ const App = () => {
   // Initialize Firestore
   const db = getFirestore(app)
 
+  // Initialize Firebase Storage
+  const storage = getStorage(app)
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Start">
@@ -58,6 +62,7 @@ const App = () => {
             <Chat
               isConnected={connectionStatus.isConnected}
               db={db}
+              storage={storage}
               {...props}
             />
           )}

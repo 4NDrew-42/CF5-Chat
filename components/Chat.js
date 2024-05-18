@@ -1,3 +1,4 @@
+// Import React and necessary hooks
 import { useEffect, useState } from 'react'
 import {
   StyleSheet,
@@ -9,6 +10,7 @@ import {
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Avatar } from 'react-native-elements'
+// Import Gifted Chat components
 import {
   Bubble,
   GiftedChat,
@@ -16,6 +18,8 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat'
+
+// Import Firestore functions
 import {
   collection,
   addDoc,
@@ -23,8 +27,13 @@ import {
   orderBy,
   onSnapshot,
 } from 'firebase/firestore'
+
+import MapView from 'react-native-maps'
+
+// Import Custom Components
 import { blendWithWhite } from './colorUtils'
 import StatusIndicator from './StstusIndicator'
+import CustomActions from './CustomActions'
 
 const Chat = ({ route, db, navigation, isConnected }) => {
   const { uid, name, backgroundColor } = route.params
@@ -193,6 +202,10 @@ const Chat = ({ route, db, navigation, isConnected }) => {
     )
   }
 
+  const renderActions = (props) => {
+    return <CustomActions {...props} />
+  }
+
   // Customizing the composer input area
   const renderComposer = (props) => {
     return (
@@ -208,6 +221,33 @@ const Chat = ({ route, db, navigation, isConnected }) => {
     )
   }
 
+   const renderCustomActions = (props) => {
+     return (
+       <CustomActions
+         storage={storage}
+         userID={uid}
+         onSend={onSend}
+         {...props}
+       />
+     )
+   }
+  
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+
   return (
     <View style={[styles.container, { backgroundColor: lightenedColor }]}>
       <GiftedChat
@@ -222,6 +262,8 @@ const Chat = ({ route, db, navigation, isConnected }) => {
         renderSend={renderSend}
         renderComposer={renderComposer}
         renderAvatar={renderAvatar}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
       />
       {/* Platform-specific KeyboardAvoidingView with offset */}
       {Platform.OS === 'android' && (
