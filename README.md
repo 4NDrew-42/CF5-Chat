@@ -59,11 +59,11 @@ npm install
 
 Create a file named `firebaseConfig.js` in the root of your project and add your Firebase configuration:
 
-````javascript
+```javascript
 // firebaseConfig.js
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from 'firebase/app'
+import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: 'your-api-key',
@@ -73,13 +73,14 @@ const firebaseConfig = {
   messagingSenderId: 'your-messaging-sender-id',
   appId: 'your-app-id',
   measurementId: 'your-measurement-id',
-};
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+const storage = getStorage(app)
 
-export { db, storage };
+export { db, storage }
+```
 
 Replace the placeholder values with your actual Firebase project credentials.
 
@@ -90,7 +91,7 @@ To run the app on your device:
 
 ```bash
 npx expo start
-````
+```
 
 This command starts the development server and opens a web page with QR codes to open the app on your iOS or Android device using the Expo Go app.
 
