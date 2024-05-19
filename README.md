@@ -21,6 +21,15 @@ Meet App is a versatile React Native chat application designed for mobile device
 
 ## Installation
 
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js**: [Download Node.js](https://nodejs.org/)
+- **Expo CLI**: Install via npm with `npm install -g expo-cli`
+- **Android Studio**: [Download Android Studio](https://developer.android.com/studio)
+- **Xcode** (for iOS development): [Download Xcode](https://developer.apple.com/xcode/)
+
 Clone the repository and install the required packages:
 
 ```bash
@@ -29,14 +38,59 @@ cd MeetApp
 npm install
 ```
 
+### Setting up Firebase
+
+1. **Create a Firebase project**:
+
+   - Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+
+2. **Enable Firestore**:
+
+   - In the Firebase Console, navigate to Firestore Database and create a new database.
+
+3. **Enable Firebase Authentication**:
+
+   - Go to the Authentication section and enable Anonymous authentication.
+
+4. **Enable Cloud Storage**:
+   - Navigate to Storage and create a new storage bucket.
+
+### Firebase Configuration
+
+Create a file named `firebaseConfig.js` in the root of your project and add your Firebase configuration:
+
+````javascript
+// firebaseConfig.js
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+
+const firebaseConfig = {
+  apiKey: 'your-api-key',
+  authDomain: 'your-auth-domain',
+  projectId: 'your-project-id',
+  storageBucket: 'your-storage-bucket',
+  messagingSenderId: 'your-messaging-sender-id',
+  appId: 'your-app-id',
+  measurementId: 'your-measurement-id',
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+export { db, storage };
+
+Replace the placeholder values with your actual Firebase project credentials.
+
 Ensure your development environment includes React Native and Expo CLI. Refer to the React Native documentation for detailed setup instructions.
 
 Usage
 To run the app on your device:
 
 ```bash
-expo start
-```
+npx expo start
+````
 
 This command starts the development server and opens a web page with QR codes to open the app on your iOS or Android device using the Expo Go app.
 

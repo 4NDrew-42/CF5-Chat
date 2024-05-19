@@ -1,15 +1,17 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 
 const StatusIndicator = ({ isConnected }) => {
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.circle,
-          { backgroundColor: isConnected ? 'parakeet' : 'red' },
-        ]}
-      />
+      <View style={styles.glow}>
+        <View
+          style={[
+            styles.circle,
+            { backgroundColor: isConnected ? '#39FF14' : 'red' },
+          ]}
+        />
+      </View>
       <Text style={styles.text}>{isConnected ? 'Online' : 'Offline'}</Text>
     </View>
   )
@@ -28,6 +30,17 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginRight: 5,
+  },
+  glow: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'green',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 10,
   },
   text: {
     color: '#000',
