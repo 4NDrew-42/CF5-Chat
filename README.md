@@ -1,6 +1,6 @@
-# Meet App
+# ChatApp
 
-Meet App is a versatile React Native chat application designed for mobile devices. It enables users to send messages, share images, and even their location, making it an essential tool for staying connected. The app supports both online and offline functionalities, ensuring users can communicate without interruption.
+ChatApp is a versatile React Native chat application designed for mobile devices. It enables users to send messages, share images, and even their location, making it an essential tool for staying connected. The app supports both online and offline functionalities, ensuring users can communicate without interruption.
 
 ## Features
 
